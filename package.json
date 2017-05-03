@@ -1,0 +1,21 @@
+{
+  "name": "scrapetest",
+  "version": "1.0.0",
+  "description": "test scrape site",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "osmosis": "*",
+    "body-parser": "*",
+    "cheerio": "^0.22.0",
+    "express": "*",
+    "jquery": "^3.2.1",
+    "mongoose": "*",
+    "request": "^2.81.0",
+    "scraperjs": "*"
+  },
+  "author": "Justin Reynaert",
+  "license": "ISC"
+}
