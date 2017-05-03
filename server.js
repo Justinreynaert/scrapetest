@@ -1,10 +1,7 @@
 const express = require('express');
-const fs = require('fs');
 const app = express();
 const osmosis = require('osmosis');
 const mongoose = require('mongoose');
-
-const lfgdata = {};
 
 mongoose.connect('mongodb://localhost/wowprogtracker');
 
