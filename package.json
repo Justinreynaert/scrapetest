@@ -9,12 +9,8 @@
   "dependencies": {
     "osmosis": "*",
     "body-parser": "*",
-    "cheerio": "^0.22.0",
     "express": "*",
-    "jquery": "^3.2.1",
-    "mongoose": "*",
-    "request": "^2.81.0",
-    "scraperjs": "*"
+    "mongoose": "*"
   },
   "author": "Justin Reynaert",
   "license": "ISC"
