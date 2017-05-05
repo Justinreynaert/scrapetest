@@ -26,7 +26,9 @@ app.use(bodyParser.json({type: 'application/vnd.api+json'}));
 app.use(bodyParser.urlencoded({extended: true}));
 
 //set the static files location /public/img will be /img for users
-app.use(express.static(__dirname + '/public'));
+app.all('/*', function(req, res) {
+    res.sendFile(path.join(__dirname, 'public/index.html'));
+});
 
 
 require('./routes/routes')(app);
