@@ -37,6 +37,6 @@ app.all('/*', function(req, res) {
 
 
 
-app.listen('5000');
+app.listen(process.env.PORT || 5000);
 
 exports = module.exports = app;
