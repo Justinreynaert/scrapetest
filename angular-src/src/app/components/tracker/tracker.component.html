@@ -1,0 +1,76 @@
+<div>
+
+  <label>Filter by class:</label>
+  <input class="form-control" [(ngModel)]="term"/>
+
+  <table class="table table-striped" [mfData]="characters" #mf="mfDataTable">
+
+
+
+
+
+    <thead>
+
+    <tr>
+      <th>
+        <mfDefaultSorter by="name">Name</mfDefaultSorter>
+      </th>
+      <th>
+        <mfDefaultSorter by="info.class">Class</mfDefaultSorter>
+      </th>
+
+      <th>
+        <mfDefaultSorter by="info.ilvl">Ilvl</mfDefaultSorter>
+      </th>
+
+      <th>
+        <mfDefaultSorter by="progression">Progression</mfDefaultSorter>
+      </th>
+
+      <th>
+        <mfDefaultSorter by="info.realm">Realm</mfDefaultSorter>
+      </th>
+      <th>
+        <mfDefaultSorter by="info.style">Raiding Style</mfDefaultSorter>
+      </th>
+      <th>
+        <mfDefaultSorter by="info.guild">Current Guild</mfDefaultSorter>
+      </th>
+      <th>
+        <mfDefaultSorter by="btag">Btag</mfDefaultSorter>
+      </th>
+
+      <th>
+        <mfDefaultSorter by="lastupdated">Last Update</mfDefaultSorter>
+      </th>
+
+
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <tr *ngFor="let character of mf.data | dataFilter:term">
+
+      <td><a class="{{character.info.class}}" target="_blank" href="https://www.wowprogress.com/character/{{character.info.zone}}/{{character.info.realm}}/{{character.name}}">{{character.name}}</a></td>
+      <td class="{{character.info.class}}">{{character.info.class}}</td>
+      <td>{{character.info.ilvl}}</td>
+      <td>{{character.progression}}</td>
+      <td>{{character.info.realm}}</td>
+      <td>{{character.info.style}}</td>
+      <td>{{character.info.guild}}</td>
+      <td>{{character.btag}}</td>
+      <td>{{character.lastupdated}}</td>
+      <td><a target="_blank" href="https://www.wowprogress.com/character/{{character.info.zone}}/{{character.info.realm}}/{{character.name}}">wowprogress</a></td>
+      <td><a target="_blank" href="http://eu.battle.net/wow/en/character/{{character.info.realm}}/{{character.name}}/simple">armory</a></td>
+    </tr>
+
+    </tbody>
+    <tfoot>
+    <tr>
+    </tr>
+    </tfoot>
+
+  </table>
+
+</div>
