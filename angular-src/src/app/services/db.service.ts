@@ -10,7 +10,7 @@ export class DbService {
   }
 
   getCharacters() {
-    return this.http.get('http://localhost:5000/api/characters')
+    return this.http.get('https://stormy-cliffs-93064.herokuapp.com/api/characters')
         .map(res => res.json());
   }
 
