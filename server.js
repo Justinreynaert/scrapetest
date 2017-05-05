@@ -16,6 +16,8 @@ app.use(cors());
 
 //body parser middleware
 
+//body parser middleware
+
 //BodyParser Middelware configuration
 app.use(bodyParser.json());
 
@@ -26,12 +28,12 @@ app.use(bodyParser.json({type: 'application/vnd.api+json'}));
 app.use(bodyParser.urlencoded({extended: true}));
 
 //set the static files location /public/img will be /img for users
-app.all('/*', function(req, res) {
-    res.sendFile(path.join(__dirname, 'public/index.html'));
-});
+app.use(express.static(__dirname + '/public'));
+
 
 
 require('./routes/routes')(app);
+
 
 app.all('/*', function(req, res) {
     res.sendFile(path.join(__dirname, 'public/index.html'));
