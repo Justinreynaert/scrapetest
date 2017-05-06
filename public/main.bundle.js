@@ -275,6 +275,15 @@ var TrackerComponent = (function () {
     function TrackerComponent(dbService) {
         var _this = this;
         this.dbService = dbService;
+        this.filters = [
+            { name: "name", display: "Name" },
+            { name: "info.class", display: "Class" },
+            { name: "info.realm", display: "Realm" },
+            { name: "info.style", display: "Raiding Style" },
+            { name: "info.guild", display: "Guild" },
+            { name: "btag", display: "Battle Tag" },
+            { name: "lastupdated", display: "Last update" },
+        ];
         dbService.getCharacters().subscribe(function (data) {
             _this.characters = data;
             console.log(_this.characters);
@@ -317,13 +326,30 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var DataFilterPipe = (function () {
     function DataFilterPipe() {
     }
-    DataFilterPipe.prototype.transform = function (characters, term) {
+    DataFilterPipe.prototype.transform = function (characters, term, searchValue) {
         //check if search term is undefined
         if (term === undefined)
             return characters;
         // return updated characters
         return characters.filter(function (character) {
-            return character.info.class.toLowerCase().includes(term.toLowerCase());
+            switch (searchValue) {
+                case "info.class":
+                    return character.info.class.toLowerCase().includes(term.toLowerCase());
+                case "name":
+                    return character.name.toLowerCase().includes(term.toLowerCase());
+                case "realm":
+                    return character.info.realm.toLowerCase().includes(term.toLowerCase());
+                case "info.style":
+                    return character.info.style.toLowerCase().includes(term.toLowerCase());
+                case "info.guild":
+                    return character.info.guild.toLowerCase().includes(term.toLowerCase());
+                case "btag":
+                    return character.btag.toLowerCase().includes(term.toLowerCase());
+                case "lastupdated":
+                    return character.lastupdated.toLowerCase().includes(term.toLowerCase());
+                default:
+                    return character.name.toLowerCase().includes(term.toLowerCase());
+            }
         });
     };
     DataFilterPipe = __decorate([
@@ -406,7 +432,7 @@ module.exports = "<nav class=\"navbar navbar-default\">\n  <div class=\"containe
 /***/ 719:
 /***/ (function(module, exports) {
 
-module.exports = "<div>\n\n  <label>Filter by class:</label>\n  <input class=\"form-control\" [(ngModel)]=\"term\"/>\n\n  <table class=\"table table-striped\" [mfData]=\"characters\" #mf=\"mfDataTable\">\n\n\n\n\n\n    <thead>\n\n    <tr>\n      <th>\n        <mfDefaultSorter by=\"name\">Name</mfDefaultSorter>\n      </th>\n      <th>\n        <mfDefaultSorter by=\"info.class\">Class</mfDefaultSorter>\n      </th>\n\n      <th>\n        <mfDefaultSorter by=\"info.ilvl\">Ilvl</mfDefaultSorter>\n      </th>\n\n      <th>\n        <mfDefaultSorter by=\"progression\">Progression</mfDefaultSorter>\n      </th>\n\n      <th>\n        <mfDefaultSorter by=\"info.realm\">Realm</mfDefaultSorter>\n      </th>\n      <th>\n        <mfDefaultSorter by=\"info.style\">Raiding Style</mfDefaultSorter>\n      </th>\n      <th>\n        <mfDefaultSorter by=\"info.guild\">Current Guild</mfDefaultSorter>\n      </th>\n      <th>\n        <mfDefaultSorter by=\"btag\">Btag</mfDefaultSorter>\n      </th>\n\n      <th>\n        <mfDefaultSorter by=\"lastupdated\">Last Update</mfDefaultSorter>\n      </th>\n\n\n    </tr>\n    </thead>\n\n    <tbody>\n\n    <tr *ngFor=\"let character of mf.data | dataFilter:term\">\n\n      <td><a class=\"{{character.info.class}}\" target=\"_blank\" href=\"https://www.wowprogress.com/character/{{character.info.zone}}/{{character.info.realm}}/{{character.name}}\">{{character.name}}</a></td>\n      <td class=\"{{character.info.class}}\">{{character.info.class}}</td>\n      <td>{{character.info.ilvl}}</td>\n      <td>{{character.progression}}</td>\n      <td>{{character.info.realm}}</td>\n      <td>{{character.info.style}}</td>\n      <td>{{character.info.guild}}</td>\n      <td>{{character.btag}}</td>\n      <td>{{character.lastupdated}}</td>\n      <td><a target=\"_blank\" href=\"https://www.wowprogress.com/character/{{character.info.zone}}/{{character.info.realm}}/{{character.name}}\">wowprogress</a></td>\n      <td><a target=\"_blank\" href=\"http://eu.battle.net/wow/en/character/{{character.info.realm}}/{{character.name}}/simple\">armory</a></td>\n    </tr>\n\n    </tbody>\n    <tfoot>\n    <tr>\n    </tr>\n    </tfoot>\n\n  </table>\n\n</div>"
+module.exports = "<div>\n\n\n\n\n  <select class=\"form-control\" [(ngModel)]=\"searchValue\">\n    <label>Filter by {{searchValue}}:</label>\n    <option *ngFor=\"let filter of filters\" [ngValue]=\"filter.name\">{{filter.display}}</option>\n  </select>\n\n  <input class=\"form-control\" [(ngModel)]=\"term\"/>\n\n  <h1 class=\"jumbotron\">{{searchValue}}</h1>\n\n  <table class=\"table table-striped\" [mfData]=\"characters\" #mf=\"mfDataTable\">\n\n    <thead>\n\n    <tr>\n      <th>\n        <mfDefaultSorter by=\"name\">Name</mfDefaultSorter>\n      </th>\n      <th>\n        <mfDefaultSorter by=\"info.class\">Class</mfDefaultSorter>\n      </th>\n\n      <th>\n        <mfDefaultSorter by=\"info.ilvl\">Ilvl</mfDefaultSorter>\n      </th>\n\n      <th>\n        <mfDefaultSorter by=\"progression\">Progression</mfDefaultSorter>\n      </th>\n\n      <th>\n        <mfDefaultSorter by=\"info.realm\">Realm</mfDefaultSorter>\n      </th>\n      <th>\n        <mfDefaultSorter by=\"info.style\">Raiding Style</mfDefaultSorter>\n      </th>\n      <th>\n        <mfDefaultSorter by=\"info.guild\">Current Guild</mfDefaultSorter>\n      </th>\n      <th>\n        <mfDefaultSorter by=\"btag\">Btag</mfDefaultSorter>\n      </th>\n\n      <th>\n        <mfDefaultSorter by=\"lastupdated\">Last Update</mfDefaultSorter>\n      </th>\n\n\n    </tr>\n    </thead>\n\n    <tbody>\n\n    <tr *ngFor=\"let character of mf.data | dataFilter: term:searchValue\">\n\n      <td><a class=\"{{character.info.class}}\" target=\"_blank\" href=\"https://www.wowprogress.com/character/{{character.info.zone}}/{{character.info.realm}}/{{character.name}}\">{{character.name}}</a></td>\n      <td class=\"{{character.info.class}}\">{{character.info.class}}</td>\n      <td>{{character.info.ilvl}}</td>\n      <td>{{character.progression}}/10</td>\n      <td>{{character.info.realm}}</td>\n      <td>{{character.info.style}}</td>\n      <td>{{character.info.guild}}</td>\n      <td>{{character.btag}}</td>\n      <td>{{character.lastupdated}}</td>\n      <td><a target=\"_blank\" href=\"https://www.wowprogress.com/character/{{character.info.zone}}/{{character.info.realm}}/{{character.name}}\">wowprogress</a></td>\n      <td><a target=\"_blank\" href=\"http://eu.battle.net/wow/en/character/{{character.info.realm}}/{{character.name}}/simple\">armory</a></td>\n    </tr>\n\n    </tbody>\n    <tfoot>\n    <tr>\n    </tr>\n    </tfoot>\n\n  </table>\n\n</div>"
 
 /***/ }),
 

@@ -1,13 +1,18 @@
 <div>
 
-  <label>Filter by class:</label>
+
+
+
+  <select class="form-control" [(ngModel)]="searchValue">
+    <label>Filter by {{searchValue}}:</label>
+    <option *ngFor="let filter of filters" [ngValue]="filter.name">{{filter.display}}</option>
+  </select>
+
   <input class="form-control" [(ngModel)]="term"/>
 
+  <h1 class="jumbotron">{{searchValue}}</h1>
+
   <table class="table table-striped" [mfData]="characters" #mf="mfDataTable">
-
-
-
-
 
     <thead>
 
@@ -50,7 +55,7 @@
 
     <tbody>
 
-    <tr *ngFor="let character of mf.data | dataFilter:term">
+    <tr *ngFor="let character of mf.data | dataFilter: term:searchValue">
 
       <td><a class="{{character.info.class}}" target="_blank" href="https://www.wowprogress.com/character/{{character.info.zone}}/{{character.info.realm}}/{{character.name}}">{{character.name}}</a></td>
       <td class="{{character.info.class}}">{{character.info.class}}</td>

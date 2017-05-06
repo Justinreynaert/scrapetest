@@ -10,6 +10,19 @@ import { ArrayObservable } from "rxjs/observable/ArrayObservable";
 })
 export class TrackerComponent implements OnInit {
 
+  filters = [
+    {name: "name", display: "Name"},
+    {name: "info.class", display: "Class"},
+    {name: "info.realm", display: "Realm"},
+    {name: "info.style", display:"Raiding Style"},
+    {name: "info.guild", display:"Guild"},
+    {name: "btag", display:"Battle Tag"},
+    {name: "lastupdated", display:"Last update"},
+
+
+
+  ];
+
   characters: Character;
 
   constructor(
