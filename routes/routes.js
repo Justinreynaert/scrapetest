@@ -173,19 +173,13 @@ module.exports = (app) => {
 
             for (let i=0; i < characters.length; i++) {
 
-                // console.log( characters[i].info.realm);
-                // console.log( characters[i].name);
-
-
-
-
                 // do an api call for that character
                 let char    = characters[i].name,
                     realm   = characters[i].info.realm,
                     key     = 'epxa6x4ssz3xwtt9y88fnd8c7z44zst3',
                     url     = 'https://eu.api.battle.net/wow/character/'+ encodeURIComponent(realm) +'/'+ encodeURIComponent(char) +'?fields=progression&locale=en_GB&apikey='+key
 
-                let statusCode = {}
+                /*let statusCode = {}
 
                 request.get(url)
                     .on('request', function(request){
@@ -249,9 +243,10 @@ module.exports = (app) => {
 
                     .on('error', function(err) {
                         //console.log(err)
-                    }).end()
+                    }).end()*/
 
-                /*request({url: url}, function(err,res,body){
+
+                request({url: url}, function(err,res,body){
 
                     console.log(err);
                     console.log(res.statusCode);
@@ -317,7 +312,7 @@ module.exports = (app) => {
 
 
 
-                })*/
+                })
             }
 
         });
@@ -325,33 +320,8 @@ module.exports = (app) => {
         res.send('done');
     })
 
-    app.get('/api/betterupdate', (req, res) => {
-
-    let char    = 'Shavarâ',
-        realm   = 'blackrock',
-        key     = 'epxa6x4ssz3xwtt9y88fnd8c7z44zst3',
-        url     = 'https://eu.api.battle.net/wow/character/'+ encodeURIComponent(realm) +'/'+ encodeURIComponent(char) +'?locale=en_GB&apikey='+key
-
-        request(
-            {url: url,
-            encoding: 'utf8',
-            headers: {
-            "Content-Type": "application/json; charset=utf-8"
-            }}, function(err,res,body){
-                console.log(url);
-                console.log(err);
-                console.log(res.statusCode);
-                console.log(body);
-            }
-        )
-    });
-
 
 
 };
-
-
-
-
 
 
