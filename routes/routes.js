@@ -2,7 +2,10 @@
 const path = require('path');
 const osmosis = require('osmosis');
 const config = require('../config/database');
-const request = require('request');
+const limit = require("simple-rate-limiter");
+const request = limit(require("request")).to(99).per(1000);
+
+
 
 
 const characterModel = require('../models/character');
@@ -106,13 +109,13 @@ module.exports = (app) => {
 
                             });
 
-                           characterModel.addCharacter(newCharacter, (err) => {
-                               if(err) {
-                                   //console.log(err)
-                               } else {
-                                   //console.log('Character made.')
-                               }
-                           });
+                            characterModel.addCharacter(newCharacter, (err) => {
+                                if(err) {
+                                    //console.log(err)
+                                } else {
+                                    //console.log('Character made.')
+                                }
+                            });
 
                         }
 
@@ -124,7 +127,7 @@ module.exports = (app) => {
 
                 //.log(console.log)
                 .error(console.log)
-                //.debug(console.log);
+            //.debug(console.log);
 
 
 
@@ -166,10 +169,13 @@ module.exports = (app) => {
 
     app.get('/api/update', (req, res) => {
 
-
+        let blizzReq = [];
 
         // fill array with all characters
         characterModel.find((err, characters) => {
+
+
+
 
             for (let i=0; i < characters.length; i++) {
 
@@ -177,151 +183,93 @@ module.exports = (app) => {
                 let char    = characters[i].name,
                     realm   = characters[i].info.realm,
                     key     = 'epxa6x4ssz3xwtt9y88fnd8c7z44zst3',
-                    url     = 'https://eu.api.battle.net/wow/character/'+ encodeURIComponent(realm) +'/'+ encodeURIComponent(char) +'?fields=progression&locale=en_GB&apikey='+key
-
-                /*let statusCode = {}
-
-                request.get(url)
-                    .on('request', function(request){
+                    url     = 'https://eu.api.battle.net/wow/character/'+ encodeURIComponent(realm) +'/'+ encodeURIComponent(char) +'?fields=progression&locale=en_GB&apikey='+key;
 
 
-                        statusCode.resCode = request.statusCode;
-
-                    })
-
-                    .on('data', function(body) {
-
-
-                        //console.log(body);
-
-                        if (statusCode.resCode == 200 ) {
-                            let data = JSON.parse(body);
-                            let counter = 0;
-
-
-                            for (let key in data.progression.raids) {
-                                if (key == 37) {
-
-                                    for (let i = 0; i < data.progression.raids[key].bosses.length; i++) {
-
-                                        if (data.progression.raids[key].bosses[i].hasOwnProperty('mythicKills')) {
-
-                                            if (data.progression.raids[key].bosses[i].mythicKills > 0) {
-                                                counter++;
-                                            }
-                                        }
-                                    }
-
-                                    characterModel.findOne({_id: characters[i]._id}, (err, character) => {
-                                        // if set - don't update
-                                        if (character.progression) {
-
-                                        } else {
-                                            character.progression = counter;
-                                        }
-                                        character.save()
-
-
-                                    })
-                                }
-
-
-                            }
-
-
-                        }
-
-                        if (statusCode.resCode == 404 ) {
-                            console.log('character not found - Deleting from db')
-                            characterModel.findOne({_id: characters[i]._id}, (err, character) => {
-
-                                character.remove();
-
-                            })
-                        }
-                    })
-
-                    .on('error', function(err) {
-                        //console.log(err)
-                    }).end()*/
-
-
-                request({url: url}, function(err,res,body){
-
-                    console.log(err);
-                    console.log(res.statusCode);
-
-
-
-
-                    if(!err && res.statusCode == 200) {
-
-                        //console.log('200');
-
-
-                        let data = JSON.parse(body);
-                        let counter = 0;
-
-
-                        if (data.progression.raids) {
-                        for (let key in data.progression.raids) {
-                            if (key == 37) {
-
-                                for (let i = 0; i < data.progression.raids[key].bosses.length; i++) {
-
-                                    if (data.progression.raids[key].bosses[i].hasOwnProperty('mythicKills')) {
-
-                                        if (data.progression.raids[key].bosses[i].mythicKills > 0) {
-                                            counter++;
-                                        }
-                                    }
-                                }
-
-                                characterModel.findOne({_id: characters[i]._id}, (err, character) => {
-                                    // if set - don't update
-                                    if (character.progression) {
-
-                                    } else {
-                                        character.progression = counter;
-                                    }
-                                    character.save()
-
-
-                                })
-                            }
-
-
-                            }
-                        }
-                    }
-
-                    if (!err && res.statusCode == 404) {
-                        console.log('character not found - Deleting from db')
-                        characterModel.findOne({_id: characters[i]._id}, (err, character) => {
-
-                            character.remove();
-
-                        })
-                    }
-
-
-                    if(err) {
-                        console.log(err)
-                    }
-
-
-
-
-                })
+                blizzReq.push((url));
             }
+
+            blizzReq.forEach(function(url) {
+                request(url, function(err, res, body) {
+
+                    if (!err && res.statusCode == 200) {
+                        console.log(res.statusCode)
+                    }
+
+                    if (res.statusCode == 404) {
+                        console.log("char not found")
+                    }
+
+                    if (res.statusCode == 503) {
+                        console.log("Maintenance")
+                    }
+
+                    if (res.statusCode == 504) {
+                        console.log(body)
+                    }
+
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            })
+
+
+
 
         });
 
+
+
+
+
         res.send('done');
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}
+
+function updateProgress(current) {
+    request({url: current.url, timeout: 10000}, function (err, res, body) {
+
+
+        if (!err && res.statusCode == 200) {
+            console.log('200');
+        }
+
+        if (!err && res.statusCode == 404) {
+            console.log('404');
+
+        }
+
+        if (!err && res.statusCode == 403) {
+
+        }
+
+        if (!err && res.statusCode !== 200 && res.statusCode !== 404) {
+            console.log(res.statusCode);
+        }
+
+
+        if (err) {
+            console.log(err)
+
+        }
     })
+}
 
 
-
-};
 
 

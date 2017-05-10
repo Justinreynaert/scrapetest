@@ -12,7 +12,8 @@
     "express": "*",
     "mongoose": "*",
     "osmosis": "*",
-    "request": "^2.81.0"
+    "request": "^2.81.0",
+    "simple-rate-limiter": "^0.2.3"
   },
   "author": "Justin Reynaert",
   "license": "ISC"
