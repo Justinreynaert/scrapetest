@@ -5,9 +5,6 @@ const config = require('../config/database');
 const limit = require("simple-rate-limiter");
 const request = limit(require("request")).to(99).per(1000);
 
-
-
-
 const characterModel = require('../models/character');
 
 module.exports = (app) => {
@@ -50,10 +47,6 @@ module.exports = (app) => {
                 .data(function(data) {
 
                     //track exisiting users in DB
-
-
-                    //console.log(data);
-
                     // get btag out of commentary
                     if (data.info.commentary) {
                         //console.log(data.info.commentary)
@@ -61,7 +54,6 @@ module.exports = (app) => {
                         let btag = data.info.commentary.match(/([A-Za-z0-9]*)#[0-9]{4,5}/g);
 
                         if (btag !== null) {
-
 
                             data.btag = btag;
                             console.log('btag:' + data.btag);
@@ -87,7 +79,6 @@ module.exports = (app) => {
                         if(count>0){
                             //console.log('Existing character.');
                             totalExisting++;
-
                         }
                         else // new char -- add to db
                         {
@@ -116,21 +107,10 @@ module.exports = (app) => {
                                     //console.log('Character made.')
                                 }
                             });
-
                         }
-
-
-
-
                     })
                 })
-
-                //.log(console.log)
-                .error(console.log)
-            //.debug(console.log);
-
-
-
+                .error(console.log);
         }
 
         res.send(timestamp);
@@ -155,8 +135,6 @@ module.exports = (app) => {
     //get character by class
     app.get('/api/characters/:class', (req, res) => {
         return characterModel.findByClass(req.params.class, (err, character) => {
-
-
             if(!err) {
 
                 console.log(character);
@@ -174,9 +152,6 @@ module.exports = (app) => {
         // fill array with all characters
         characterModel.find((err, characters) => {
 
-
-
-
             for (let i=0; i < characters.length; i++) {
 
                 // do an api call for that character
@@ -184,7 +159,6 @@ module.exports = (app) => {
                     realm   = characters[i].info.realm,
                     key     = 'epxa6x4ssz3xwtt9y88fnd8c7z44zst3',
                     url     = 'https://eu.api.battle.net/wow/character/'+ encodeURIComponent(realm) +'/'+ encodeURIComponent(char) +'?fields=progression&locale=en_GB&apikey='+key;
-
 
                 blizzReq.push((url));
             }
@@ -213,62 +187,12 @@ module.exports = (app) => {
                     }
                 });
             })
-
-
-
-
         });
-
-
-
-
-
         res.send('done');
     });
 
+};
 
-
-
-
-
-
-
-
-
-
-
-
-
-}
-
-function updateProgress(current) {
-    request({url: current.url, timeout: 10000}, function (err, res, body) {
-
-
-        if (!err && res.statusCode == 200) {
-            console.log('200');
-        }
-
-        if (!err && res.statusCode == 404) {
-            console.log('404');
-
-        }
-
-        if (!err && res.statusCode == 403) {
-
-        }
-
-        if (!err && res.statusCode !== 200 && res.statusCode !== 404) {
-            console.log(res.statusCode);
-        }
-
-
-        if (err) {
-            console.log(err)
-
-        }
-    })
-}
 
 
 
