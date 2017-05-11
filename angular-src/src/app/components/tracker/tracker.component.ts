@@ -31,12 +31,21 @@ export class TrackerComponent implements OnInit {
 
     dbService.getCharacters().subscribe(data => {
       this.characters = data;
-      console.log(this.characters);
     })
 
   }
 
   ngOnInit() {
+  }
+
+  addToList(id) {
+
+    this.dbService.updateContact(id);
+
+  }
+
+  change() {
+    console.log(this.characters.contact)
   }
 
 }
@@ -46,6 +55,7 @@ interface Character {
   _id: number;
   dateupdated: number;
   info: {[key: string]: Info};
+  contact: boolean;
 }
 
 interface Info {

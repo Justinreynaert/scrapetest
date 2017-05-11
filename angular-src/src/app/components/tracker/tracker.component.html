@@ -29,7 +29,7 @@
       </th>
 
       <th>
-        <mfDefaultSorter by="progression">Progression</mfDefaultSorter>
+        <mfDefaultSorter by="progression">Prog</mfDefaultSorter>
       </th>
 
       <th>
@@ -66,8 +66,9 @@
       <td>{{character.info.guild}}</td>
       <td>{{character.btag}}</td>
       <td>{{character.lastupdated}}</td>
-      <td><a target="_blank" href="https://www.wowprogress.com/character/{{character.info.zone}}/{{character.info.realm}}/{{character.name}}">wowprogress</a></td>
+      <td><a target="_blank" href="https://www.wowprogress.com/character/{{character.info.zone}}/{{character.info.realm}}/{{character.name}}">wowp</a></td>
       <td><a target="_blank" href="http://eu.battle.net/wow/en/character/{{character.info.realm}}/{{character.name}}/simple">armory</a></td>
+      <td><input type="button" (click)="change()" value="{{character.contact}}"></td>
     </tr>
 
     </tbody>
@@ -77,5 +78,4 @@
     </tfoot>
 
   </table>
-
 </div>

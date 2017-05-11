@@ -19,6 +19,7 @@ const Character = new mongoose.Schema({
         dateupdated: String,
         commentary: String
     },
+    contact: Boolean
 
 },{
     versionKey: false
@@ -41,3 +42,4 @@ module.exports.findById = (Id, callback) => {
     const query = {'_id': Id};
     characterModel.find(query, callback)
 };
+

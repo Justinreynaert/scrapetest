@@ -13,6 +13,7 @@ import {DataTableModule} from "angular2-datatable";
 //services
 import { DbService } from './services/db.service';
 import { DataFilterPipe } from './pipes/data-filter.pipe';
+import { ReplaceCommaPipe } from './pipes/replace-comma.pipe';
 
 const appRoutes: Routes = [
   {path:'', component:HomeComponent},
@@ -27,7 +28,8 @@ const appRoutes: Routes = [
     NavbarComponent,
     HomeComponent,
     TrackerComponent,
-    DataFilterPipe
+    DataFilterPipe,
+    ReplaceCommaPipe
   ],
   imports: [
     BrowserModule,

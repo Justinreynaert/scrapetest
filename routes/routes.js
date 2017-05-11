@@ -18,6 +18,7 @@ module.exports = (app) => {
         let totalExisting = 0;
         let timestamp = JSON.stringify(Date.now());
 
+
         for (let i = 0; i < pagesToScan +1; i++) {
 
             // SCRAPE TIME
@@ -145,7 +146,7 @@ module.exports = (app) => {
         })
     });
 
-    app.get('/api/update', (req, res) => {
+    app.get('/api/updateProgress', (req, res) => {
 
         let blizzReq = [];
 
@@ -158,28 +159,74 @@ module.exports = (app) => {
                 let char    = characters[i].name,
                     realm   = characters[i].info.realm,
                     key     = 'epxa6x4ssz3xwtt9y88fnd8c7z44zst3',
+                    _id = characters[i]._id,
                     url     = 'https://eu.api.battle.net/wow/character/'+ encodeURIComponent(realm) +'/'+ encodeURIComponent(char) +'?fields=progression&locale=en_GB&apikey='+key;
 
-                blizzReq.push((url));
+                    char = {
+                        url: url,
+                        _id: _id
+                    };
+
+                blizzReq.push((char));
             }
 
-            blizzReq.forEach(function(url) {
-                request(url, function(err, res, body) {
+            blizzReq.forEach(function(char) {
+
+                request(char.url, function(err, res, body) {
+
+                    let counter = 0;
+
+
 
                     if (!err && res.statusCode == 200) {
-                        console.log(res.statusCode)
+
+                        data = JSON.parse(body);
+
+                        let counter = 0;
+
+                        for (let i = 0; i < data.progression.raids[37].bosses.length; i++) {
+
+                            if (data.progression.raids[37].bosses[i].hasOwnProperty('mythicKills')) {
+
+                                if (data.progression.raids[37].bosses[i].mythicKills > 0) {
+                                    counter++;
+                                }
+                            }
+
+
+                        }
+
+                        characterModel.findOne({_id: char._id}, (err, character) => {
+                            // if set - don't update
+                            if (character.progression) {
+                                if (character.progression !== counter) {
+                                    character.progression = counter;
+                                }
+
+                            } else {
+                                character.progression = counter;
+                            }
+
+                            character.save();
+
+
+                        });
                     }
 
                     if (res.statusCode == 404) {
-                        console.log("char not found")
+                        console.log(char.url);
+                        console.log("char not found");
+                        characterModel.findOne({_id: char._id}, (err, character) => {
+                            //character.remove();
+                        });
                     }
 
                     if (res.statusCode == 503) {
-                        console.log("Maintenance")
+                        console.log("Maintenance");
                     }
 
                     if (res.statusCode == 504) {
-                        console.log(body)
+
                     }
 
                     if (err) {
@@ -190,6 +237,26 @@ module.exports = (app) => {
         });
         res.send('done');
     });
+
+    app.post('/api/toggleContact/:id', function(req, res) {
+
+        console.log(req.params.id);
+
+        characterModel.findOne({_id: req.params.id}, (err, character) => {
+            if (character.contact == true) {
+                character.contact = false;
+            } else {
+                character.contact = true;
+            }
+
+            character.save();
+
+            console.log(character);
+            res.send('character updated');
+        })
+
+
+    })
 
 };
 

@@ -14,4 +14,9 @@ export class DbService {
         .map(res => res.json());
   }
 
+  updateContact(id) {
+    this.http.get('http://localhost:5000/api/toggleContact/' + id)
+  }
+
+
 }
